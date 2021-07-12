@@ -8,6 +8,8 @@ const Product = new Schema({
     price_sale: {type: Number, required: false},
     percent_sale: {type: Number, required: false},
     image: {type: String, required: true},
+    list_image: {},
+    shoe_type: {type: Number, require: true},
     color: {type: Array, required: true},
     size: {type: Array, required: true}
 },

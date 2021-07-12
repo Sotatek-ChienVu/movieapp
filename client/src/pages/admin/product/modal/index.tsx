@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Modal, Form, Input, Button, Checkbox, Select } from "antd";
+import { Modal, Form, Input, Button, Checkbox, Select, Radio } from "antd";
 import UploadFile from "../../../../components/uploadFile";
 import apis from "../../../../api";
 import { SUCCESS } from "../../../../constants";
 import LoadingPage from "../../../../components/LoadingPage";
+import UploadListFile from "../../../../components/uploadListImageProduct";
 interface Props {
   form?: any;
   setUrl?: any;
@@ -15,6 +16,10 @@ interface Props {
   setEdit?: any;
   handleEdit: (e: any) => void | undefined;
   url?: string;
+  listUrl?: { url: string }[];
+  setListUrl?: any;
+  shoeType?: string;
+  setShoeType?: any;
 }
 const { Option } = Select;
 const ModalCreateProduct = (props: Props) => {
@@ -29,6 +34,10 @@ const ModalCreateProduct = (props: Props) => {
     edit,
     dataEdit,
     setEdit,
+    listUrl,
+    setListUrl,
+    shoeType,
+    setShoeType
   } = props;
   const CreateProduct = (e: any) => {
     debugger;
@@ -45,23 +54,25 @@ const ModalCreateProduct = (props: Props) => {
       handleSubmit(e);
     }
   };
-  const handleCheck = (e: any) => {
-  };
-
-  const handleChangeColor = (e: any) => {
-  };
-
-  const handleChangeSize = (e: any) => {
+  const onChangeProduct = (e: any) => {
+     setShoeType(e.target.value)
   }
+  const handleCheck = (e: any) => {};
+
+  const handleChangeColor = (e: any) => {};
+
+  const handleChangeSize = (e: any) => {};
   React.useEffect(() => {
-    if (url) {
-      form.setFieldsValue({ image: url });
+    if (url && listUrl) {
+      form.setFieldsValue({ image: url, list_image: listUrl });
     }
     if (edit) {
       form.setFieldsValue(dataEdit);
       setUrl(dataEdit.image);
+      setListUrl(dataEdit.list_image);
+      setShoeType(dataEdit.shoe_type)
     }
-  }, [url, form, edit]);
+  }, [url, form, edit, listUrl]);
   return (
     <Modal
       width="40%"
@@ -70,6 +81,7 @@ const ModalCreateProduct = (props: Props) => {
       onCancel={() => {
         setEdit(false);
         setUrl("");
+        setListUrl([]);
         setVisible(false);
         form.resetFields();
       }}
@@ -100,11 +112,35 @@ const ModalCreateProduct = (props: Props) => {
           <Input />
         </Form.Item>
         <Form.Item
+          label="Loại sản phẩm"
+          name="shoe_type"
+          rules={[{ required: true, message: "Is  not Null" }]}
+        >
+          <Radio.Group onChange={onChangeProduct} value={shoeType}>
+            <Radio value={1}>Giày Nike</Radio>
+            <Radio value={2}>Giày Adidas</Radio>
+            <Radio value={3}>Giày Vans</Radio>
+            <Radio value={4}>Giày Thời Trang</Radio>
+            <Radio value={5}>Giày Khác</Radio>
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item
           label="Hình ảnh sản phẩm"
           name="image"
           rules={[{ required: true, message: "Is  not Null" }]}
         >
           <UploadFile url={url} setUrl={setUrl} />
+        </Form.Item>
+        <Form.Item
+          label="Hình ảnh chi tiết sản phẩm"
+          name="list_image"
+          rules={[{ required: true, message: "Is  not Null" }]}
+        >
+          <UploadListFile
+            edit={edit}
+            listUrl={listUrl}
+            setListUrl={setListUrl}
+          />
         </Form.Item>
         <Form.Item label="Màu sắc" name="color">
           <Select
@@ -144,63 +180,42 @@ const ModalCreateProduct = (props: Props) => {
             </Option>
           </Select>
         </Form.Item>
-        <Form.Item 
-          name="size"
-          label="Size giày"
-        >
-           <Select
-    mode="multiple"
-    style={{ width: '100%' }}
-    placeholder="select size"
-    onChange={handleChangeSize}
-    optionLabelProp="label"
-  >
-    <Option value="36" label="36">
-      <div className="demo-option-label-item">
-        36
-      </div>
-    </Option>
-    <Option value="37" label="37">
-      <div className="demo-option-label-item">
-        37
-      </div>
-    </Option>
-    <Option value="38" label="38">
-      <div className="demo-option-label-item">
-        38
-      </div>
-    </Option>
-    <Option value="39" label="39">
-      <div className="demo-option-label-item">
-      39
-      </div>
-    </Option>
-    <Option value="40" label="40">
-      <div className="demo-option-label-item">
-       40
-      </div>
-    </Option>
-    <Option value="41" label="41">
-      <div className="demo-option-label-item">
-      41
-      </div>
-    </Option>
-    <Option value="42" label="42">
-      <div className="demo-option-label-item">
-        42
-      </div>
-    </Option>
-    <Option value="43" label="43">
-      <div className="demo-option-label-item">
-      43
-      </div>
-    </Option>
-    <Option value="44" label="44">
-      <div className="demo-option-label-item">
-      44
-      </div>
-    </Option>
-  </Select>
+        <Form.Item name="size" label="Size giày">
+          <Select
+            mode="multiple"
+            style={{ width: "100%" }}
+            placeholder="select size"
+            onChange={handleChangeSize}
+            optionLabelProp="label"
+          >
+            <Option value="36" label="36">
+              <div className="demo-option-label-item">36</div>
+            </Option>
+            <Option value="37" label="37">
+              <div className="demo-option-label-item">37</div>
+            </Option>
+            <Option value="38" label="38">
+              <div className="demo-option-label-item">38</div>
+            </Option>
+            <Option value="39" label="39">
+              <div className="demo-option-label-item">39</div>
+            </Option>
+            <Option value="40" label="40">
+              <div className="demo-option-label-item">40</div>
+            </Option>
+            <Option value="41" label="41">
+              <div className="demo-option-label-item">41</div>
+            </Option>
+            <Option value="42" label="42">
+              <div className="demo-option-label-item">42</div>
+            </Option>
+            <Option value="43" label="43">
+              <div className="demo-option-label-item">43</div>
+            </Option>
+            <Option value="44" label="44">
+              <div className="demo-option-label-item">44</div>
+            </Option>
+          </Select>
         </Form.Item>
         <Form.Item>
           <Button htmlType="submit" type="primary">

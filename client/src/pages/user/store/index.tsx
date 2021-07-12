@@ -16,9 +16,10 @@ const StoreProduct = () => {
   
   const history = useHistory()
   React.useEffect(()=> {
-     apis.getStore(userId).then(({ data }: {data: Irespone}) => {
+    if(userId){
+        apis.getStore(userId).then(({ data }: {data: Irespone}) => {
         setLoading(false);
-      if(data.data.store !== [null] && data.data.store.length > 0){
+      if(data?.data?.store !== [null] && data?.data?.store?.length > 0){
         setStore(data?.data?.store);
            const counts = data?.data?.store.length > 0 && data?.data?.store.map((el: any) => (el.price_sale * el.total))
       let i;
@@ -30,6 +31,8 @@ const StoreProduct = () => {
       }
      
     })
+    }
+     
       
     },[])
 

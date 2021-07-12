@@ -12,7 +12,7 @@ async function forgotPassword( user , origin) {
     // create reset token that expires after 24 hours
     account.resetToken = {
         token: randomTokenString(),
-        expires: new Date(Date.now() + 24*60*60*1000)
+        expires: Date.now() + 24*60*60*1000
     };
     await account.save();
 
@@ -25,7 +25,7 @@ function randomTokenString() {
 async function sendPasswordResetEmail(account, origin) {
     let message;
     if (origin) {
-        const resetUrl = `${origin}/account/reset-password?token=${account.resetToken.token}`;
+        const resetUrl = `${origin}update-password?code=${account.resetToken.token}`;
         message = `<p>Please click the below link to reset your password, the link will be valid for 1 day:</p>
                    <a href="${resetUrl}">${resetUrl}</a>`;
     } else {

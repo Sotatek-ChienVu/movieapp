@@ -35,7 +35,7 @@ getStore  = async(req,res) => {
            return res.status(400).json({status: 'ERROR', message: err})
        }
        if(!store || store.length < 1){
-        return res.status(400).json({status: 'ERROR', message: 'Not found in store with user ID'})
+        return res.status(200).json({status: 'SUCCESS', message: 'Not found in store with user ID', data: null})
        }
        else {
            return res.status(200).json({status: 'SUCCESS', message: 'Get Store Success', data: store})

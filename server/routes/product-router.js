@@ -11,4 +11,5 @@ router.get('/product/:page', Product.GetProductPage)
 router.put('/edit-product/:id', Product.EditProduct)
 router.delete('/delete-product/:id', Product.DeleteProduct)
 router.get('/search-product/:search',Product.SearchProduct)
+router.get('/filter-product/:type', Product.FilterProduct)
 module.exports = router

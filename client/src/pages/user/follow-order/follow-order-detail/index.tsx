@@ -20,7 +20,7 @@ const OrderDetail = () => {
                     <h5>Chi tiết đơn hàng</h5>
                     <div className="d-flex order-detail_card">
                         <div className="order-detail_card-label">
-                            Mã sản phẩm :
+                            Mã đơn hàng :
                         </div>
                         <div>
                             OD-{orderDetail._id}

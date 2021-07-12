@@ -10,25 +10,59 @@ import ReactImageZoom from 'react-image-zoom';
 import LoadingPage from "../../../components/LoadingPage";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { PayPalButton } from "react-paypal-button-v2";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import {faCheckCircle , faTruck, faShieldAlt, faExchangeAlt , faAdjust, faMedal, faThumbsUp,faTimes, faClock,faHistory, faExpandAlt} from '@fortawesome/free-solid-svg-icons'
 const { Panel } = Collapse;
 const ProductDetail = () => {
   const params: any = useParams();
-  const [product, setProduct]: any = useState({});
+  const [product, setProduct]: any = useState('');
   const [color, setColor]: any = useState("");
   const [size, setSize]: any = useState("");
   const [number,setNumber] = useState(1);
   const [loading,setLoading] =useState(true);
   const history = useHistory();
-  const image = { height: 800, zoomWidth: 1000, img: `${product?.image}`};
+  const listImage = product?.list_image;
+  const [urlShow,setUrlShow] = useState("");
+  const image = { height: 800, zoomWidth: 1000};
+  const [nav1, setNav1] = useState();
+  const [nav2, setNav2] = useState();
+  // const slickSettingsVerticalNav = {
+  //   arrows: false,
+  //   vertical: true,
+  //   slidesToShow: 4,
+  //   swipeToSlide: true,
+  //   focusOnSelect: true,
+  //   verticalSwiping: true,
+  //   asNavFor: product.list_image,
+  //   // ref: slider => (this.slider1 = slider),
+  // }
+
+  // const slickSettingsVerticalMain = {
+  //   arrows: false,
+  //   slidesToShow: 1,
+  //   asNavFor: product.list_image,
+  //   // ref: slider => (this.slider2 = slider),
+  // }
+
+   
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1
+  };
   React.useEffect(() => {
     apis.getProductDetail(params.id).then((resp) => {
       if(resp){
         setProduct(resp.data.data);
+        setUrlShow(resp.data.data?.list_image[0]?.url);
         setLoading(false);
       }
       });
-  }, [params]);
+  }, []);
 
   const handleColor = (e: string) => {
     setColor([{ key: e }]);
@@ -37,7 +71,6 @@ const ProductDetail = () => {
   const handleSize = (e: string) => {
     setSize([{ key: e }]);
   };
-
   const renderDescription = (value: string) => {
       if(value?.includes('\n')){
           const data = value?.replace('\n', '\n * ') 
@@ -57,7 +90,7 @@ const ProductDetail = () => {
   const handleAddition = () => {
     setNumber(number + 1)
   }
-
+console.log('product', product)
   const userId = localStorage.getItem('id');
   const handleSubmit = () => {
      apis.CreateStore({id: userId, store: {
@@ -91,17 +124,40 @@ const ProductDetail = () => {
   if(loading){
     return <LoadingPage />
   }
+  const slickSettingsVerticalNav = {
+    arrows: false,
+    vertical: true,
+    slidesToShow: 2,
+    swipeToSlide: true,
+    focusOnSelect: true,
+    verticalSwiping: true,
+    
+  }
+ 
+  const handleShowImage = (url: string) => {
+    setUrlShow(url);
+  }
+
   return (
       <>
     <div className="page-detail d-flex">
-      <div className="slide-image col-6">
-        {/* <Image
-          style={{ objectFit: "cover" }}
-          width="90%"
-          height={800}
-          src={`${product?.image}`}
-        /> */}
-        <ReactImageZoom  {...image}/>
+      <div className="col-2" >
+        <div>
+      <Slider 
+       {...slickSettingsVerticalNav}
+       >
+            {Array.isArray(product?.list_image) && product?.list_image?.length > 0 && product?.list_image?.map((slide: any, i: number) => (
+              <div className="d-block" key={i} onClick={()=>handleShowImage(slide.url)}>
+                <img height={180} width={230} src={slide.url} className="slide-nav" alt=""/>
+              </div>
+            ))}
+             
+          </Slider>
+           
+      </div>
+      </div>
+      <div className="slide-image col-4">
+        {urlShow && <ReactImageZoom  {...image} img={urlShow}/>}
       </div>
       <div className="col-6 description-product">
         <div className="description-product_layout">
@@ -216,7 +272,7 @@ const ProductDetail = () => {
        </div>
     <div className="note-content row px-3">
         {note_data && note_data?.map((item: any,index: number) => (
-        <div className="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 d-flex py-3" style={{alignItems: 'center'}}>
+        <div className="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 d-flex py-3" style={{alignItems: 'center'}} key={index}>
            <div className="note-content_icon">{item.icon}</div>
            <div className="note-content_text">
                <p className="note-content_text-title mb-0">{item.title}</p>

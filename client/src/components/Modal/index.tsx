@@ -12,7 +12,7 @@ interface Props{
 const ModalAntd = (props: Props) => {
     const {visible, children, onSubmit, onCancle} = props;
     return (
-        <Modal width = '40%' onOk={onSubmit} visible={visible} onCancel={onCancle}>
+        <Modal width = '40%' onOk={onSubmit} visible={visible} footer={null} onCancel={onCancle}>
            {children}
         </Modal>
     )

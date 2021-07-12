@@ -74,7 +74,7 @@ const HomePage = () => {
             <div className="row">
               {Array.isArray(product) &&
                 product.length > 0 &&
-                product.map((item: any, index: number) => (
+                product?.map((item: any, index: number) => (
                   <div
                     className="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 product-card"
                     key={`card_${item._id}`}

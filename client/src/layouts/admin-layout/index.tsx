@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-solid-svg-icons'
 import apis from '../../api';
 import { SUCCESS } from '../../constants';
+import MangerStatistical from '../../pages/admin/statistical';
 
 
 
@@ -32,15 +33,15 @@ const LayoutAdmin = () => {
         }
     },[])
     
-    const socket = socketIOClient(ENDPOINT,{
-        reconnectionDelay: 100,
-        reconnection:true,
-        reconnectionAttempts: 5000,
-        transports: ['websocket', 'polling', 'flashsocket'],
-        agent: false, // [2] Please don't set this to true
-        upgrade: false,
-        rejectUnauthorized: false
-    });
+    // const socket = socketIOClient(ENDPOINT,{
+    //     reconnectionDelay: 100,
+    //     reconnection:true,
+    //     reconnectionAttempts: 5000,
+    //     transports: ['websocket', 'polling', 'flashsocket'],
+    //     agent: false, // [2] Please don't set this to true
+    //     upgrade: false,
+    //     rejectUnauthorized: false
+    // });
     React.useEffect(()=> {
         apis.getNotify().then(({data}:{data: Irespone}) =>{
             if(data.status === SUCCESS){
@@ -50,28 +51,28 @@ const LayoutAdmin = () => {
          
         })
     },[])
-    React.useEffect(() => {
+    // React.useEffect(() => {
         
-        socket.on("Order", data => {
-            if(data){
-                setCount(data.length);
-                setData(data);
-                setLoading(false)
-            }
-        });
+    //     socket.on("Order", (data: any) => {
+    //         if(data){
+    //             setCount(data.length);
+    //             setData(data);
+    //             setLoading(false)
+    //         }
+    //     });
         
-    },[])
+    // },[])
     
     const handleShowNotify = () => {
         setShowNoti(!showNoti);
     }
     const handlePreview = (id: string) => {
-        socket.emit("Preview", id);
-        socket.on('PreviewSuccess', data => {
-            if(data){
-                    window.location.href = '/admin/order-form';
-            }
-        })
+    //     socket.emit("Preview", id);
+    //     socket.on('PreviewSuccess', (data: any) => {
+    //         if(data){
+    //                 history.push('/admin/order-form');
+    //         }
+    //     })
         
     }
 
@@ -102,12 +103,11 @@ const LayoutAdmin = () => {
                     
                     </div>
                     <Switch>
-                        <Router>
                             <Route path="/admin/create-product" component={ManageProduct} />
                             <Route path="/admin/manager-account" component={MangerAccount} />
+                            <Route path="/admin/statistical" component={MangerStatistical} />
                             <Route path="/admin/order-form" component={OrderForm} />
                             <Route path="/admin" exact component={Dashboard} />
-                        </Router>
                     </Switch>
                 </div>
             </div>

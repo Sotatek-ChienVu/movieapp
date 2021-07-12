@@ -17,6 +17,8 @@ import { SUCCESS } from "../../../constants";
 import './style.scss';
 import LoadingPage from "../../../components/LoadingPage";
 import ButtonCustom from "../../../components/Button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 const ManageProduct = () => {
   const [form] = Form.useForm();
@@ -26,11 +28,12 @@ const ManageProduct = () => {
   const [edit, setEdit] = useState(false);
   const [keySearch,setKeySearch] = useState('');
   const [product, setProduct]: any = useState([]);
+  const [listUrl, setListUrl]: any = useState([]);
   const [dataEdit, setDataEdit] = useState({});
+  const [shoeType, setShoeType] = useState('');
   const handleSubmit = (e: any) => {
     setVisible(false);
     apis.createProduct(e).then((resp: any) => {
-      debugger;
       if (resp?.data.status === SUCCESS) {
         if(e.price_sale){
           setProduct([...product, {...e,percent_sale: Math.ceil((1 - (e.price_sale/e.price))*100)}]);
@@ -40,6 +43,7 @@ const ManageProduct = () => {
     });
     form.resetFields();
     setUrl('');
+    setListUrl('');
   };
   const handleGetProduct  = () => {
     apis.getProduct().then((resp) => {
@@ -53,8 +57,17 @@ const ManageProduct = () => {
     });
   }
   React.useEffect(() => {
-    handleGetProduct();
+    apis.getProduct().then((resp) => {
+      if(resp){
+        setLoading(false)
+      }
+      if(resp.data.status === SUCCESS){
+        setProduct(resp.data.data);
+        
+      }
+    });
   }, []);
+  console.log(product)
   const columns = [
     {
       key: 2,
@@ -133,8 +146,8 @@ const ManageProduct = () => {
   };
 
   const handleEdit = (e: any) => {
-      setVisible(false)
-      setEdit(false)
+      setVisible(false);
+      setEdit(false);
        apis.updateProduct({id: e.id, data: e?.e}).then((resp: any)=> {
            if(resp?.data.status === SUCCESS){
                notification.success({message: 'Edit success'});
@@ -151,6 +164,7 @@ const ManageProduct = () => {
        });
        form.resetFields()
        setUrl('');
+       setListUrl('');
   };
  
   const handleSearchChange = (e: any) => {
@@ -177,12 +191,13 @@ const ManageProduct = () => {
             <Input onChange={handleSearchChange}/>
           </Form.Item>
           <Form.Item>
-            <Button style={{borderLeft: 'none', height: '40px'}} onClick={handleSearch}><i className="fas fa-search"></i></Button>
+            <Button style={{borderLeft: 'none', height: '40px'}} onClick={handleSearch}><FontAwesomeIcon icon={faSearch}/></Button>
           </Form.Item>
         </Form>
         <ButtonCustom mode="blue" onClick={() => setVisible(true)}>
           + Create Product
         </ButtonCustom>
+        {visible &&
         <ModalCreateProduct
           handleEdit={handleEdit}
           setEdit={setEdit}
@@ -193,8 +208,13 @@ const ManageProduct = () => {
           form={form}
           url={url}
           setUrl={setUrl}
+          shoeType={shoeType}
+          setShoeType={setShoeType}
+          listUrl={listUrl}
+          setListUrl={setListUrl}
           handleSubmit={handleSubmit}
         />
+        }
       </div>
       <div className="product-content pt-3">
         <Table columns={columns} dataSource={product} size="middle" />

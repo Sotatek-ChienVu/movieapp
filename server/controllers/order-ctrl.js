@@ -75,4 +75,42 @@ editOrder = async(req,res) => {
   })
    
 }
-module.exports = {CreateOrder, getOrderUser, getAllOrder, deleteOrder, editOrder}
+
+searchOrder = async(req,res) => {
+  const result = [];
+  const keySearch = req.params.search;
+  console.log(keySearch)
+  await Order.find({}, (err, order) => {
+    if(err){
+      return res.status(400).json({status: 'ERROR', message: err})
+    }
+    if(!order || order.length < 1){
+      return res.status(200).json({status: 'SUCCESS',message: 'Order width name not found', data: []})
+    }
+    if(order){
+      order?.forEach((el) => {
+        if (
+          el.infor.name.toLowerCase().includes(keySearch.toLowerCase()) ===
+          true
+        ) {
+          result.push(el);
+        }
+      });
+      if (result.length > 0) {
+        return res
+          .status(200)
+          .json({ status: "SUCCESS", message: "Search Success", result });
+      }
+      if (!result.length)
+        res
+          .status(200)
+          .json({
+            status: "ERROR",
+            message: "No result search",
+            errorCode: "ERROR.SEARCH.NOT.FOUND",
+            result: [],
+          });
+    }
+  })
+}
+module.exports = {CreateOrder, getOrderUser, getAllOrder, deleteOrder, editOrder, searchOrder}

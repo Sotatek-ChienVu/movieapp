@@ -9,6 +9,8 @@ const Login = () => {
   const [data, setData] = useState({
     username: "",
     password: "",
+    firstname: "",
+    lastname: ""
   });
   const [form] = Form.useForm();
   const [checked,setChecked] = useState(false);
@@ -19,18 +21,18 @@ const Login = () => {
   };
   const handleSubmit = async (e: any) => {
     if(!login){
-      await api.register({username: e.username,password: e.password}).then((resp:any) => {
-        debugger
+      await api.register(data).then((resp:any) => {
+console.log(resp)
         if (resp.data.status === SUCCESS) {
           localStorage.setItem("auth", resp.data.accessToken);
-          localStorage.setItem("id", resp.data._id);
-          localStorage.setItem("id", resp.data.rule);
+          localStorage.setItem("id", resp.data.id);
+          localStorage.setItem("rule", resp.data.rule);
           history.push("/");
         }
       })
     }
     else {
-      await api.login(data).then((res) => {
+      await api.login({username: e.username, password: e.password}).then((res) => {
       if (res.data.status === SUCCESS) {
         localStorage.setItem("auth", res.data.accessToken);
         localStorage.setItem("id", res.data.userId);
@@ -62,7 +64,7 @@ const Login = () => {
           <Form form={form} onFinish={handleSubmit}>
             <Form.Item
               name="username"
-              label="Username"
+              label="Email"
               colon = {false} 
               className="input-username"
               rules={[{ required: true, message: "Enter username" }]}
@@ -87,7 +89,7 @@ const Login = () => {
                 onChange={handleOnchange("password")}
               />
             </Form.Item>
-            {!login ? <Form.Item
+            {!login ? <> <Form.Item
               name="confirm-password"
               label="Confirm Password"
               colon = {false} 
@@ -110,11 +112,41 @@ const Login = () => {
               ]}
             >
               <Input
-                type="password"
+                type="text"
                 placeholder="Confirm Password"
                 onChange={handleOnchange("confirm-password")}
               />
-            </Form.Item>:null}
+            </Form.Item>
+            <div className="item-flex">
+            <Form.Item
+              name="firstname"
+              label="Firstname"
+              colon = {false} 
+              className="input-password"
+              rules={[{ required: true, message: "Enter firstname" }]}
+            >
+              <Input
+                type="text"
+                placeholder="firstname"
+                onChange={handleOnchange("firstname")}
+              />
+            </Form.Item>
+            <Form.Item
+              name="lastname"
+              label="Lastname"
+              colon = {false} 
+              className="input-password"
+              rules={[{ required: true, message: "Enter lastname" }]}
+            >
+              <Input
+                type="text"
+                placeholder="Lastname"
+                onChange={handleOnchange("lastname")}
+              />
+            </Form.Item>
+            </div>
+            </>
+            :null}
             <Button className="login-btn-submit" htmlType="submit" type="primary">
               Submit
             </Button>

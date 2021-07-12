@@ -11,6 +11,8 @@ import LoadingPage from "../../../components/LoadingPage";
 import { ERROR, SUCCESS } from "../../../constants";
 import ModalAntd from "../../../components/Modal";
 import ButtonCustom from "../../../components/Button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 const ENDPOINT = "http://localhost:3002";
 const OrderForm = () => {
   const [order, setOrder]: any = useState([]);
@@ -19,17 +21,19 @@ const OrderForm = () => {
   const [status,setStatus] = useState('');
   const [loadingButton,setLoadingButton] = useState(false);
   const [record, setRecord]: any = useState("");
+  const [keySearch,setKeySearch] = useState('');
+  const [product, setProduct]: any = useState([]);
   const history = useHistory();
   const [formEdit] = Form.useForm();
-  const socket = socketIOClient(ENDPOINT, {
-    reconnectionDelay: 100,
-    reconnection: true,
-    reconnectionAttempts: 5000,
-    transports: ["websocket", "polling", "flashsocket"],
-    agent: false, // [2] Please don't set this to true
-    upgrade: false,
-    rejectUnauthorized: false,
-  });
+  // const socket = socketIOClient(ENDPOINT, {
+  //   reconnectionDelay: 100,
+  //   reconnection: true,
+  //   reconnectionAttempts: 5000,
+  //   transports: ["websocket", "polling", "flashsocket"],
+  //   agent: false, // [2] Please don't set this to true
+  //   upgrade: false,
+  //   rejectUnauthorized: false,
+  // });
   const columns = [
     {
       key: "1",
@@ -127,14 +131,18 @@ const OrderForm = () => {
     },
   ];
 
-  React.useEffect(() => {
-    socket.on("getAllOrder", (data: any) => {
-      if (data) {
-        setOrder(data.reverse());
+  const getAllOrder = () => {
+    apis.getAllOrder().then((data: any) => {
+      console.log(data)
+       if (data) {
+        setOrder(data?.data?.data?.reverse());
         setLoading(false);
       }
-    });
-  
+    }) 
+  }
+
+  React.useEffect(() => {
+    getAllOrder()
   }, []);
 
   const DeleteProduct = (id: string) => {
@@ -177,11 +185,34 @@ const OrderForm = () => {
     })
   };
 
+
+
+  const handleSearchChange = (e: any) => {
+    setKeySearch(e.target.value)
+    if(e.target.value === ''){
+      getAllOrder();
+    }
+}
+
+const handleSearch =() => {
+  apis.SearchOrder(keySearch).then((resp: any) =>{
+    setOrder(resp?.data?.result?.reverse());
+  })
+}
+
   if (loading) {
     return <LoadingPage />;
   }
   return (
     <>
+        <Form style={{ width: "40%", display: "flex" }}>
+          <Form.Item style={{ width: "80%" }}>
+            <Input placeholder="Nhập tên người nhận" onChange={handleSearchChange}/>
+          </Form.Item>
+          <Form.Item>
+            <Button style={{borderLeft: 'none', height: '40px'}} onClick={handleSearch}><FontAwesomeIcon icon={faSearch}/></Button>
+          </Form.Item>
+        </Form>
       <Table
         className="admin_table-order"
         columns={columns}

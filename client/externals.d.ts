@@ -6,6 +6,7 @@ declare module '*.scss' {
   declare module 'react-router-dom';
   declare module 'react-router';
   declare module 'react-messenger-customer-chat';
+  declare module 'socket.io-client';
   declare namespace NodeJS {
     interface ProcessEnv {
       readonly URL: string;
